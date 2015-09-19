@@ -3,6 +3,7 @@ class CreateArticles < ActiveRecord::Migration
     create_table :articles do |t|
       t.string :title
       t.text :content
+      t.string :uuid, index: true
 
       t.timestamps null: false
     end

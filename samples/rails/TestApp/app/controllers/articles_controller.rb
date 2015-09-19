@@ -15,6 +15,7 @@ class ArticlesController < ApplicationController
   # GET /articles/new
   def new
     @article = Article.new
+    @article.uuid = SecureRandom.uuid;
   end
 
   # GET /articles/1/edit

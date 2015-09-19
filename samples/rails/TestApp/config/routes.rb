@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  get 'attachments/create'
+
   resources :articles
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
@@ -6,6 +8,7 @@ Rails.application.routes.draw do
   # You can have the root of your site routed with "root"
   # root 'welcome#index'
   root 'articles#index'
+  resources :attachments
 
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'

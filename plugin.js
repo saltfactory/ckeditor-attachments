@@ -4,16 +4,26 @@ CKEDITOR.plugins.add('ckeditor-attachments', {
     //console.info('init plugin');
     //console.info(editor);
 
-    editor.addCommand('attachment', new CKEDITOR.dialogCommand('attachment-dialog'));
+
+    //$("#attach_image").click(function(){
+    //  editor.openDialog
+    //  //CKEDITOR.instances.article_content.openDialog('ckeditor_attachments');
+    //});
+
+
+
+    editor.addCommand('openAttachmentDialog', new CKEDITOR.dialogCommand('attachment-dialog'));
+
     editor.ui.addButton('Attachment', {
       label: 'Attach File',
-      command: 'attachment',
+      command: 'openAttachmentDialog',
       toolbar: 'insert,0'
     });
 
     CKEDITOR.dialog.add('attachment-dialog', CKEDITOR.plugins.getPath('ckeditor-attachments') + 'dialogs/attachment-dialog.js');
   }
 });
+
 
 
 
