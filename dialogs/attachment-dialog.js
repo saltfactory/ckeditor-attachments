@@ -13,19 +13,45 @@ CKEDITOR.dialog.add('attachment-dialog', function(editor){
           {
             type: 'file',
             id: 'upload',
-            label: editor.lang.image.btnUpload,
+            label: '첨부파일을 선택하세요',
             style: 'height:40px',
             size: 38
           },
           {
             type: 'fileButton',
             id: 'uploadButton',
-            filebrowser: 'info:txtUrl',
-            label: editor.lang.image.btnUpload,
-            'for': [ 'Upload', 'upload' ]
+            //filebrowser: 'info:txtUrl',
+            filebrowser: {
+              action:'QuickUpload',
+              target:'info:txtUrl',
+              onSelect: function(fileUrl, data){
+                console.info(fileUrl);
+              }
+            },
+            label: '파일전송',
+            'for': [ 'Upload', 'upload' ],
+            //onLoad:function(){
+            //  var uploadButton = $(this.getInputElement().$.children[0]);
+            //  uploadButton.text('Uploading...');
+            //}
+            onClick:function(){
+              $("#progress").show();
+            }
+          },
+          {
+            type: 'html',
+            hidden: true,
+            html: '<i id="progress" class="fa fa-cog fa-5x fa-spin"></i>'
           }
         ]
       }
-    ]
+    ],
+    onShow: function(){
+      //console.log('show')
+      $('body').find('iframe.cke_dialog_ui_input_file').load(function(){
+        console.log('load')
+        $("#progress").hide();
+      });
+    }
   }
 });

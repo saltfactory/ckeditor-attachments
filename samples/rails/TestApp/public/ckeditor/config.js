@@ -42,6 +42,7 @@ CKEDITOR.editorConfig = function( config ) {
 	config.removeDialogTabs = 'image:advanced;link:advanced';
 
 	config.extraPlugins = 'ckeditor-attachments';
+  config.contentsCss = 'https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css';
 
 	// Rails CSRF token
   config.filebrowserParams = function(){
