@@ -8,8 +8,16 @@ class AttachmentsController < ApplicationController
 
     if @attachment.save!
       @text =  %Q"<script type='text/javascript'>
-              window.parent.CKEDITOR.tools.callFunction(#{params[:callback]},#{@attachment.id}, '#{@attachment.file.original_filename}');
-              window.parent.CKEDITOR.tools.callFunction(#{params[:CKEditorFuncNum]},  '#{@attachment.file.url}', '파일이 서버에 업로드 되었습니다.');
+              var file = {
+                attachment_id: #{@attachment.id},
+                file_name: '#{@attachment.file.original_filename}',
+                content_type: '#{@attachment.file.content_type}',
+                file_url : '#{@attachment.file.url}',
+                thumb_url : '#{!(@attachment.file.content_type =~ /^image/).nil? ?  @attachment.file(:thumb) : "null"}'
+              };
+
+              window.parent.CKEDITOR.tools.callFunction(#{params[:callback]}, file);
+              window.parent.CKEDITOR.tools.callFunction(#{params[:CKEditorFuncNum]},  '#{@attachment.file.url}');
             </script>"
 
       render :text => @text

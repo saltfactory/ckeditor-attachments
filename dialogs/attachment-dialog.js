@@ -1,8 +1,11 @@
+var uploadButton;
+
 CKEDITOR.dialog.add('attachment-dialog', function(editor){
   return {
     title: 'Attachment',
     minWidth: 400,
     minHeihgt: 200,
+    height: 200,
     contents: [
       {
         id: 'Upload',
@@ -25,17 +28,19 @@ CKEDITOR.dialog.add('attachment-dialog', function(editor){
               action:'QuickUpload',
               target:'info:txtUrl',
               onSelect: function(fileUrl, data){
-                console.info(fileUrl);
+                //console.info(fileUrl);
               }
             },
             label: '파일전송',
             'for': [ 'Upload', 'upload' ],
-            //onLoad:function(){
-            //  var uploadButton = $(this.getInputElement().$.children[0]);
-            //  uploadButton.text('Uploading...');
-            //}
+            onLoad:function(){
+              uploadButton = $(this.getInputElement().$.children[0]);
+              //uploadButton.hide();
+            },
+
             onClick:function(){
               $("#progress").show();
+                uploadButton.text('Uploading...');
             }
           },
           {
@@ -46,12 +51,45 @@ CKEDITOR.dialog.add('attachment-dialog', function(editor){
         ]
       }
     ],
+    onOk:function(event){
+      //event.preventDefault();
+      uploadButton.click();
+    },
     onShow: function(){
-      //console.log('show')
+
       $('body').find('iframe.cke_dialog_ui_input_file').load(function(){
-        console.log('load')
         $("#progress").hide();
+        //console.info(uploadButton);
+        //console.info(CKEDITOR.dialog.getCurrent());
+
+        if(uploadButton.text() == "Uploading...") {
+          CKEDITOR.dialog.getCurrent().hide();
+          uploadButton.text('파일전송');
+        }
+
+
       });
-    }
+    },
+    buttons:""
+    //buttons:[
+    //  {
+    //    type:'button',
+    //    id:'cancelButton',
+    //    label: '취소',
+    //    title: 'Cancel',
+    //    onClick: function(){
+    //      console.debug('on cancel')
+    //    }
+    //  },
+    //  {
+    //    type:'button',
+    //    id:'submitButton',
+    //    label: '파일전송',
+    //    title: 'Submit',
+    //    onClick: function(){
+    //      console.debug('on submit')
+    //    }
+    //  }
+    //]
   }
 });

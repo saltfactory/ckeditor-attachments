@@ -17,3 +17,5 @@
 /tmp
 /public/components
 /public/system
+
+**/*.bak*

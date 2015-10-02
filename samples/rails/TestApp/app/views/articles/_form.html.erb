@@ -50,50 +50,137 @@
     font-size: 5em !important;
   }
 
+  #attachments {
+    line-height: 16px;
+    height: 16px;
+    font-size: 16px;
+  }
+
+  #attachments img {
+    width: 16px;
+    height: 16px;
+  }
+
+  /*.attachments .fa {*/
+  /*font-size: 24px;*/
+  /*}*/
+
 </style>
 
 <script>
 
-  function delete_attachment(attachment_id){
-    var callback = function(data){
-      $("#attachment-"+data.id).remove();
+  function delete_attachment(attachment_id) {
+    var callback = function (data) {
+
+      var images = CKEDITOR.instances.article_content.document.find('.attachment-' + attachment_id);
+
+      for (var i = 0; i < images.count(); i++) {
+        images.getItem(i).remove();
+      }
+
+      $("#attachment-" + data.id).remove();
     };
 
-    if (confirm("Are you sure?")) {
-      $.post('/attachments/' + attachment_id, {_method:'delete'}, callback, "json");
+    if (confirm("첨부파일을 영구삭제합니다.")) {
+      $.post('/attachments/' + attachment_id, {_method: 'delete'}, callback, "json");
     } else {
       console.error('error');
     }
 
+//    var images = CKEDITOR.instances.article_content.document.find('.attachment-'+attachment_id)
+//
+//    for(var i=0; i< images.count(); i++){
+//      images.getItem(i).remove();
+//    }
+//
+//    $("#attachment-"+attachment_id).remove();
+
+  }
+
+  function insertImage(attachment_id, file_url) {
+//    CKEDITOR.instances.article_content.insertHtml("<img src='"+file_url+"' class='attachment-"+attachment_id+"'>", 'text');
+    CKEDITOR.instances.article_content.setData("<img src='" + file_url + "' class='attachment-" + attachment_id + "'>");
+
+//    var element = CKEDITOR.dom.element.createFromHtml('<img src="'+file_url+'" class="attachment-'+attachment_id+'">');
+//    CKEDITOR.instances.article_content.editable().insertElement( element );
+  }
+
+  function downloadFile(src) {
+    window.open(src, 'Download');
+  }
+
+  function appendAttachment(file) {
+    $("#attachments").append("<li id='attachment-" + file.attachment_id + "'><i class='fa fa-paperclip'></i>" + file.file_name +
+      "<a href='#' onclick='delete_attachment(" + file.attachment_id + ")'>&nbsp;<i class='fa fa-trash-o'></i></a></li>");
+  }
+
+  function appendImage(file) {
+    insertImage(file.attachment_id, file.file_url);
+
+    $("#attachments").append('<li id="attachment-' + file.attachment_id + '"><img src="' + file.thumb_url + '"/>' +
+      '<a href="#" onclick="insertImage(' + file.attachment_id + ',\'' + file.file_url + '\')";>' + file.file_name + '</a>' +
+      '<a href="#" onclick="delete_attachment(' + file.attachment_id + ')">&nbsp;<i class="fa fa-trash-o"></i></a></li>');
   }
 
   function ready() {
 
 
     CKEDITOR.timestamp = +new Date;
-    CKEDITOR.plugins.addExternal('ckeditor-attachments', '/ckeditor/plugins/ckeditor-attachments/', 'plugin.js');
-    var ref = CKEDITOR.tools.addFunction(function(attachment_id, filename){
-//      console.log(attachment_id)
-//      console.log(filename)
-      $("#attachments").append("<li id='attachment-"+attachment_id+"'><i class='fa fa-paperclip'></i>" + filename +
-        "<a href='#' onclick='delete_attachment("+attachment_id+")'><i class='fa fa-trash-o'></i></a></li>");
+
+    var ref = CKEDITOR.tools.addFunction(function (file) {
+//      var innerHTML = "<li class='attachments attachment-"+file.attachment_id+"'>";
+
+      if (file.thumb_url != "null") {
+//        insertImage(file);
+        appendImage(file);
+//          innerHTML += "<a href='#' onclick='insertImage(\""+file.file_url+"\")';>"+file.file_name+"</a>";
+      } else {
+        appendAttachment(file);
+//          innerHTML += "<i class='fa fa-paperclip'></i>";
+//        innerHTML += "<a href='#' onclick='downloadFile(\""+file.file_url+"\")'>"+file.file_name+"</a>";
+      }
+
+//      innerHTML += "<a href='#' onclick='delete_attachment("+file.attachment_id+")'>&nbsp;<i class='fa fa-trash-o'></i></a></li>";
+
+//      console.log(innerHTML);
+//      $("#attachments").append(innerHTML);
+
     });
+
+    CKEDITOR.plugins.addExternal('ckeditor-attachments', '/ckeditor/plugins/ckeditor-attachments/' , 'plugin.js');
 
 
     CKEDITOR.replace('article_content', {
       customConfig: '/ckeditor/config.js',
-      filebrowserUploadUrl: "/attachments?article_uuid=<%= @article.uuid %>&callback="+ref
+      filebrowserUploadUrl: "/attachments?article_uuid=<%= @article.uuid %>&callback=" + ref
     });
 
     $("#attach_image").click(function () {
       CKEDITOR.instances.article_content.openDialog('ckeditor-attachments');
       CKEDITOR.instances.article_content.execCommand('openAttachmentDialog');
     });
+
+
+    var file = {
+      attachment_id: 54,
+      file_name: "01-html5superman.jpg",
+      content_type: "image/jpeg",
+      file_url: "/system/original/01-html5superman.jpg?1443628096",
+      thumb_url: "/system/thumb/01-html5superman.jpg?1443628096"
+    };
+
+
+    CKEDITOR.on('instanceReady', function () {
+      appendImage(file);
+//      insertImage(file.attachment_id, file.file_url);
+    });
+
+
   }
 
-  CKEDITOR.add_attachment = function(filename){
-    $("#attachments").append("<li>" + filename + "</li>");
-  };
+  //  CKEDITOR.add_attachment = function(filename){
+  //    $("#attachments").append("<li>" + filename + "</li>");
+  //  };
 
   $(document).ready(ready);
   $(document).on('page:load', ready);

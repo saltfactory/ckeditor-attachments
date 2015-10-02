@@ -1,14 +1,6 @@
 CKEDITOR.plugins.add('ckeditor-attachments', {
   icons: 'attachment',
   init: function (editor) {
-    //console.info('init plugin');
-    //console.info(editor);
-
-
-    //$("#attach_image").click(function(){
-    //  editor.openDialog
-    //  //CKEDITOR.instances.article_content.openDialog('ckeditor_attachments');
-    //});
 
     editor.addContentsCss( 'https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css');
 
